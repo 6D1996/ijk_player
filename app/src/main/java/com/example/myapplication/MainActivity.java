@@ -1,74 +1,279 @@
 package com.example.myapplication;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+//import android.support.v7.app.AppCompatActivity;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.Menu;
+import android.view.Surface;
+import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.VideoView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
-
-import com.dou361.ijkplayer.widget.AndroidMediaController;
 import com.dou361.ijkplayer.widget.IjkVideoView;
 
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class MainActivity extends AppCompatActivity{
-    private IjkVideoView ijkVideoView;
+
+/*
+Created by: Chen 6D
+Date: 2020-9-23
+*/
+
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private Button button,button_full;
+    private Spinner Video_Modul_Spinner, Video_Stream_Spinner;
+
+    private static final String TAG = "MainActivity";
+    private IjkVideoView simpleExoPlayerView1, simpleExoPlayerView2,simpleExoPlayerView3, simpleExoPlayerView4,simpleExoPlayerView0;
+
+
+
+    private TextView resolutionTextView;
+    Uri mp4VideoUri0 = Uri.parse("rtmp://202.69.69.180:443/webcast/bshdlive-pc");
+    Uri mp4VideoUri1 = Uri.parse("http://ivi.bupt.edu.cn/hls/cctv1.m3u8");
+    Uri mp4VideoUri2 = Uri.parse("http://ivi.bupt.edu.cn/hls/cctv2.m3u8");
+    Uri mp4VideoUri3 = Uri.parse("http://ivi.bupt.edu.cn/hls/cctv3.m3u8");
+    Uri mp4VideoUri4 = Uri.parse("http://ivi.bupt.edu.cn/hls/cctv4.m3u8");
+
+    Uri mp4VideoUri5 = Uri.parse("http://ivi.bupt.edu.cn/hls/cctv15.m3u8");
+    Uri mp4VideoUri6 = Uri.parse("http://ivi.bupt.edu.cn/hls/cctv6.m3u8");
+    Uri mp4VideoUri7 = Uri.parse("http://ivi.bupt.edu.cn/hls/cctv7.m3u8");
+    Uri mp4VideoUri8 = Uri.parse("http://ivi.bupt.edu.cn/hls/cctv8.m3u8");
+
+    public static final int UPDATE_Zero_Video = 0;
+    public static final int UPDATE_1st_Video = 1;
+    public static final int UPDATE_2nd_Video = 2;
+    public static final int UPDATE_3rd_Video = 3;
+    public static final int UPDATE_4th_Video = 4;
+    private Build.VERSION Util;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
         setContentView(R.layout.activity_main);
+        button = (Button)findViewById(R.id.Click);
+        button.setOnClickListener(this);
+        Video_Modul_Spinner = (Spinner)findViewById(R.id.Spinner_VIdeo_Model);
+        Video_Modul_Spinner.setSelection(0,true);//进入不会自动播放
+        Video_Modul_Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String result=parent.getItemAtPosition(position).toString();
+                Toast.makeText(MainActivity.this,result,Toast.LENGTH_SHORT).show();
+                switch (position){
+                    case 0:{
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(int i=0;i<5;i++){
+                            Message message = new Message();
+                            message.what = i;
+                            handler.sendMessage(message);
+                        }}
+                }).start();}
+                    break;
+                    case 1:{
+                        new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(int i=5;i<10;i++){
+                        Message message = new Message();
+                        message.what = i;
+                        handler.sendMessage(message);
+                    }}
+                }).start();}
+                    break;
+                    default:
+                        break;
 
-        //初始化播放库
-        IjkMediaPlayer.loadLibrariesOnce(null);
-        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
-        IjkMediaPlayer ijkMediaPlayer = null;
-        ijkMediaPlayer = new IjkMediaPlayer();
+            }
 
 
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0);
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
+        }
 
-        // 黑屏
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec_mpeg4", 1);
-        // 降低 播放 rtmp 播放的延迟
-        ijkMediaPlayer.setOption(1, "analyzemaxduration", 100L);
-        ijkMediaPlayer.setOption(1, "probesize", 10240L);
-        ijkMediaPlayer.setOption(1, "flush_packets", 1L);
-        ijkMediaPlayer.setOption(4, "packet-buffering", 0L);
-        //丢帧
-        ijkMediaPlayer.setOption(4, "framedrop", 1L);
+                                                          @Override
+                                                          public void onNothingSelected(AdapterView<?> parent) {
 
-        //硬解码造成黑屏无声
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
+                                                          }
+                                                      });
 
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "soundtouch", 1);
+        button_full=(Button)findViewById(R.id.full_button);
+        button_full.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, front_View.class);
+                startActivity(intent);
+            }
+        });
 
-        // 清空DNS，因为DNS的问题报10000
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1);
 
-        //使用AndroidMediaController类控制播放相关操作
-        AndroidMediaController mMediaController = new AndroidMediaController(MainActivity.this, false);
-        //mMediaController.setSupportActionBar(actionBar);
-        ijkVideoView = findViewById(R.id.ijkplayerView);
-        ijkVideoView.setMediaController(mMediaController);
+        resolutionTextView = new TextView(this);
+        resolutionTextView = (TextView) findViewById(R.id.resolution_textView);
 
-        // 测试可用地址
-        // 香港财经  rtmp://202.69.69.180:443/webcast/bshdlive-pc
-        // 湖南卫视   rtmp://58.200.131.2:1935/livetv/hunantv
-        // 美国2, rtmp://media3.scctv.net/live/scctv_800
+        simpleExoPlayerView1 = findViewById(R.id.player_view1);
 
-        //设置要播放的直播或者视频的地址：
-        ijkVideoView.setVideoPath("rtmp://202.69.69.180:443/webcast/bshdlive-pc");
-        //开始播放
-        ijkVideoView.start();
+        simpleExoPlayerView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, front_View.class);
+                startActivity(intent);
+            }
+        });
+
+/*        View VideoView1=(View)findViewById(R.id.player_view1);
+        VideoView1.setOnClickListener(this);*/
+
+        simpleExoPlayerView2 = findViewById(R.id.player_view2);
+
+        simpleExoPlayerView0 =findViewById(R.id.player_view0);
+
+        simpleExoPlayerView3 = findViewById(R.id.player_view3);
+
+        simpleExoPlayerView4 =findViewById(R.id.player_view4);
+
+
     }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            //....
+
+            case R.id.Click:
+//                play_video(mp4VideoUri1, simpleExoPlayerView1, player1);
+//                play_video(mp4VideoUri2, simpleExoPlayerView2, player2);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(int i=0;i<5;i++){
+                        Message message = new Message();
+                        message.what = i;
+                        handler.sendMessage(message);
+                    }}
+                }).start();
+                break;}
+
+                //...
+        }
+
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+
+            switch (msg.what) {
+                case UPDATE_1st_Video:
+                    PlayVideo.playVideo(simpleExoPlayerView0,mp4VideoUri0.toString());
+                    break;
+                case UPDATE_Zero_Video:
+                    PlayVideo.playVideo(simpleExoPlayerView1,mp4VideoUri1.toString());
+                    break;
+                case UPDATE_2nd_Video:
+                    PlayVideo.playVideo(simpleExoPlayerView2,mp4VideoUri2.toString());
+                    break;
+                case UPDATE_3rd_Video:
+                    PlayVideo.playVideo(simpleExoPlayerView3,mp4VideoUri3.toString());
+                    break;
+                case UPDATE_4th_Video:
+                    PlayVideo.playVideo(simpleExoPlayerView4,mp4VideoUri4.toString());
+                    break;
+                case 5:
+                    UPDATE_3rd_Video:PlayVideo.playVideo(simpleExoPlayerView3,mp4VideoUri3.toString());
+                    break;
+                case 6:
+                    PlayVideo.playVideo(simpleExoPlayerView3,mp4VideoUri3.toString());
+                    break;
+                case 7:
+                    PlayVideo.playVideo(simpleExoPlayerView3,mp4VideoUri3.toString());
+                    break;
+                case 8:
+                    PlayVideo.playVideo(simpleExoPlayerView3,mp4VideoUri3.toString());
+                    break;
+                case 9:
+                    PlayVideo.playVideo(simpleExoPlayerView3,mp4VideoUri3.toString());
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+
+
+
+
+
+
+
+
+//-------------------------------------------------------ANDROID LIFECYCLE---------------------------------------------------------------------------------------------
+
     @Override
     protected void onStop() {
         super.onStop();
-        if (ijkVideoView.isPlaying()) {
-            ijkVideoView.stopPlayback();
-            ijkVideoView.release(true);
-        }
-        IjkMediaPlayer.native_profileEnd();
+        if (Util.SDK_INT > 23) {
+            onHidden();
+        Log.v(TAG, "onStop()...");
     }}
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v(TAG, "onStart()...");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v(TAG, "onResume()...");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            onHidden();
+        }
+
+        Log.v(TAG, "onPause()...");
+    }
+
+    private void onHidden() {
+
+        Log.d(TAG, "onClick: Release ALL");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.v(TAG, "onDestroy()...");
+/*        player1.release();
+        player2.release();
+        player3.release();
+        player4.release();
+        player0.release();*/
+    }
+
+
+}
